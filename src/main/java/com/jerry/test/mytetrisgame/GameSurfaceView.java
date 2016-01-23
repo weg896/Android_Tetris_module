@@ -1,28 +1,24 @@
 package com.jerry.test.mytetrisgame;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 /**
  * Created by test on 14/01/16.
  */
-public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback{
+public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback{
 
     private SurfaceHolder surfaceHolder;
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private SurfaceThread thread;
 
-    public SurfacePanel(Context context, AttributeSet attributeSet){
+    public GameSurfaceView(Context context, AttributeSet attributeSet){
         super(context, attributeSet);
         surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
@@ -78,7 +74,7 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback{
 
 
         public SurfaceThread(SurfaceHolder surfaceHolder){
-            SurfacePanel.this.surfaceHolder = surfaceHolder;
+            GameSurfaceView.this.surfaceHolder = surfaceHolder;
         }
 
 
@@ -87,13 +83,13 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback{
                 Canvas c = null;
 
                 try{
-                    c = SurfacePanel.this.surfaceHolder.lockCanvas(null);
-                    synchronized (SurfacePanel.this.surfaceHolder){
+                    c = GameSurfaceView.this.surfaceHolder.lockCanvas(null);
+                    synchronized (GameSurfaceView.this.surfaceHolder){
                         doDraw(c);
                     }
                 }finally{
                     if(c != null){
-                        SurfacePanel.this.surfaceHolder.unlockCanvasAndPost(c);
+                        GameSurfaceView.this.surfaceHolder.unlockCanvasAndPost(c);
                     }
                 }
             }
@@ -104,7 +100,7 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback{
         }
 
         public void setSurfaceSize(int width, int height){
-            synchronized (SurfacePanel.this.surfaceHolder){
+            synchronized (GameSurfaceView.this.surfaceHolder){
                 canvasHeight = height;
                 canvasWidth = width;
                 bubbleX = canvasHeight / 2;
@@ -136,7 +132,7 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback{
 
             if(canvas != null) {
                 canvas.drawColor(Color.BLACK);
-                canvas.drawCircle(bubbleX, bubbleY, radius, SurfacePanel.this.paint);
+                canvas.drawCircle(bubbleX, bubbleY, radius, GameSurfaceView.this.paint);
             }
         }
     }

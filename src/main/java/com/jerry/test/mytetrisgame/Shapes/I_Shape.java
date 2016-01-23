@@ -31,6 +31,7 @@ public class I_Shape extends RootShape{
             shapePosition[i][POSITION_Y] = centerY;
         }
 
+
     }
 
 
@@ -47,6 +48,7 @@ public class I_Shape extends RootShape{
                     shapePosition[i][POSITION_X] = currentCenterX;
                     shapePosition[i][POSITION_Y] = currentCenterY+i;
                 }
+
                 // TODO:should test collision
                 break;
             case SHAPE_FACE_SOUTH:
@@ -55,6 +57,7 @@ public class I_Shape extends RootShape{
                     shapePosition[i][POSITION_X] = currentCenterX + i;
                     shapePosition[i][POSITION_Y] = currentCenterY;
                 }
+
                 // TODO:should test collision
                 break;
         }

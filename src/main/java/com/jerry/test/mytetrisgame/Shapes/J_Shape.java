@@ -38,6 +38,7 @@ public class J_Shape extends RootShape {
 
         shapePosition[0][POSITION_X] = centerX+1;
         shapePosition[0][POSITION_Y] = centerY-1;
+
     }
 
 
