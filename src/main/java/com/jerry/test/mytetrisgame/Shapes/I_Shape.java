@@ -1,5 +1,7 @@
 package com.jerry.test.mytetrisgame.Shapes;
 
+import com.jerry.test.mytetrisgame.Model.BlocksFrame;
+
 /**
  * Created by test on 21/01/16.
  */
@@ -30,12 +32,11 @@ public class I_Shape extends RootShape{
             shapePosition[i][POSITION_X] = centerX+i;
             shapePosition[i][POSITION_Y] = centerY;
         }
-
-
     }
 
 
-    public void rotateShape(){
+    public synchronized void rotateShape(BlocksFrame blocksFrame){
+        int[][] currentShape = shapePosition;
         int currentCenterX = shapePosition[centerBlockIndex][POSITION_X];
         int currentCenterY = shapePosition[centerBlockIndex][POSITION_Y];
 
@@ -49,7 +50,11 @@ public class I_Shape extends RootShape{
                     shapePosition[i][POSITION_Y] = currentCenterY+i;
                 }
 
-                // TODO:should test collision
+                if(detectCollisionWithBlocksFrame(blocksFrame)){
+                    // has collision, roll back
+                    shapePosition = currentShape;
+                }
+
                 break;
             case SHAPE_FACE_SOUTH:
                 shapeFaceTo = SHAPE_FACE_EAST;
@@ -58,7 +63,10 @@ public class I_Shape extends RootShape{
                     shapePosition[i][POSITION_Y] = currentCenterY;
                 }
 
-                // TODO:should test collision
+                if(detectCollisionWithBlocksFrame(blocksFrame)){
+                    // has collision, roll back
+                    shapePosition = currentShape;
+                }
                 break;
         }
 
@@ -74,7 +82,7 @@ public class I_Shape extends RootShape{
             test_cleanMockScreen(mockScreen, mockScreenSize);
             test_boundShapeToMockScreen(mockScreen, iShape);
             test_printMockScreen(mockScreen, mockScreenSize);
-            iShape.rotateShape();
+            //iShape.rotateShape();
 
             System.out.println(">>>>>>>>>>>>>>>");
         }

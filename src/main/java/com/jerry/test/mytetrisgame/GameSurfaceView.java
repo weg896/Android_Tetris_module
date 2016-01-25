@@ -8,13 +8,20 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.jerry.test.mytetrisgame.Model.BlocksFrame;
+import com.jerry.test.mytetrisgame.Model.GameHolder;
+import com.jerry.test.mytetrisgame.Shapes.RootShape;
+
 /**
  * Created by test on 14/01/16.
  */
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback{
 
     private SurfaceHolder surfaceHolder;
-    private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint blockPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint shapePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    private final GameHolder gameHolder;
 
     private SurfaceThread thread;
 
@@ -22,8 +29,13 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         super(context, attributeSet);
         surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
-        paint.setColor(Color.BLUE);
-        paint.setStyle(Paint.Style.FILL);
+
+        blockPaint.setColor(Color.BLUE);
+        blockPaint.setStyle(Paint.Style.FILL);
+        shapePaint.setColor(Color.YELLOW);
+        shapePaint.setStyle(Paint.Style.FILL);
+
+        gameHolder = new GameHolder();
     }
 
     public SurfaceThread getThread(){
@@ -53,23 +65,28 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         }
     }
 
+    public void shapeMoveLeft(){
+        gameHolder.tryMoveShapeLeft();
+    }
 
+    public void shapeMoveRight(){
+        gameHolder.tryMoveShapeRight();
+    }
 
-
+    public void shapeRotation(){
+        gameHolder.tryRotateShape();
+    }
 
     public class SurfaceThread extends Thread {
 
-        private int canvasWidth = 200;
-        private int canvasHeight = 400;
-        private int speedX = 5;
-        private int speedY = 5;
+        private static final long MOVE_DOWN_INTERVAL = 1000;
+        private int canvasWidth = 300;
+        private int canvasHeight = 600;
+
         private boolean run = false;
 
-        private float bubbleX;
-        private float bubbleY;
-        private float headingX;
-        private float headingY;
-        private float radius=50f;
+        private float blockWidth=30;
+        private float blockHeight=30;
 
 
 
@@ -79,8 +96,16 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
 
         public void run(){
+            long timeInterval = 500;
+            long startTime = 0;
+
             while(run){
+
                 Canvas c = null;
+                if(timeInterval >= MOVE_DOWN_INTERVAL){
+                    run = gameHolder.tryMoveShapeDown();
+                    startTime = System.currentTimeMillis();
+                }
 
                 try{
                     c = GameSurfaceView.this.surfaceHolder.lockCanvas(null);
@@ -92,6 +117,9 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                         GameSurfaceView.this.surfaceHolder.unlockCanvasAndPost(c);
                     }
                 }
+
+                timeInterval = (System.currentTimeMillis() - startTime);
+
             }
         }
 
@@ -103,36 +131,35 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             synchronized (GameSurfaceView.this.surfaceHolder){
                 canvasHeight = height;
                 canvasWidth = width;
-                bubbleX = canvasHeight / 2;
-                bubbleY = canvasWidth / 2;
-                headingX = (float) (-1+(Math.random())*2);
-                headingY = (float) (-1+(Math.random())*2);
+                blockWidth = canvasWidth * 1.0f / BlocksFrame.NUMBER_BLOCKS_X_AXIS;
+                blockHeight =  canvasHeight * 1.0f / (BlocksFrame.NUMBER_BLOCKS_Y_AXIS + BlocksFrame.EXTEND_BLOCKS_Y_AXIS);
             }
         }
 
         private void doDraw(Canvas canvas){
-            bubbleX = bubbleX + (headingX * speedX);
-            bubbleY = bubbleY + (headingY * speedY);
 
-            if(bubbleX+radius > canvasWidth){
-                speedX = 0-speedX;
-            }
-
-            if(bubbleX < radius + 0){
-                speedX = 0-speedX;
-            }
-
-            if(bubbleY+radius > canvasHeight){
-                speedY = 0-speedY;
-            }
-
-            if(bubbleY < radius + 0){
-                speedY = 0-speedY;
-            }
+            boolean[][] currentBlocks = gameHolder.getBlocks();
+            int[][] currentShape = gameHolder.getShapePositions();
 
             if(canvas != null) {
                 canvas.drawColor(Color.BLACK);
-                canvas.drawCircle(bubbleX, bubbleY, radius, GameSurfaceView.this.paint);
+                for(int y=0;y<BlocksFrame.NUMBER_BLOCKS_Y_AXIS + BlocksFrame.EXTEND_BLOCKS_Y_AXIS;y++){
+                    for(int x=0;x<BlocksFrame.NUMBER_BLOCKS_X_AXIS;x++){
+                        if(currentBlocks[y][x]) {
+                            canvas.drawRect(blockWidth * x, blockHeight * y,
+                                    blockWidth * (x + 1), blockHeight * (y + 1),
+                                    GameSurfaceView.this.blockPaint);
+                        }
+                    }
+                }
+
+                for(int b=0;b<RootShape.TOTAL_BLOCKS_NUMBER;b++){
+                    canvas.drawRect(blockWidth * currentShape[b][RootShape.POSITION_X],
+                            blockHeight *  currentShape[b][RootShape.POSITION_Y],
+                            blockWidth * (currentShape[b][RootShape.POSITION_X] + 1),
+                            blockHeight * (currentShape[b][RootShape.POSITION_Y] + 1),
+                            GameSurfaceView.this.shapePaint);
+                }
             }
         }
     }

@@ -1,5 +1,7 @@
 package com.jerry.test.mytetrisgame.Shapes;
 
+import com.jerry.test.mytetrisgame.Model.BlocksFrame;
+
 /**
  * Created by test on 21/01/16.
  */
@@ -26,7 +28,7 @@ public class O_Shape extends RootShape {
         shapePosition[3][POSITION_Y] = centerY+1;
     }
 
-    public void rotateShape(){
+    public synchronized void rotateShape(BlocksFrame blocksFrame){
         // this shape has no rotation feature
     }
 
@@ -40,7 +42,7 @@ public class O_Shape extends RootShape {
             test_cleanMockScreen(mockScreen, mockScreenSize);
             test_boundShapeToMockScreen(mockScreen, oShape);
             test_printMockScreen(mockScreen, mockScreenSize);
-            oShape.rotateShape();
+            //oShape.rotateShape();
 
             System.out.println(">>>>>>>>>>>>>>>");
         }

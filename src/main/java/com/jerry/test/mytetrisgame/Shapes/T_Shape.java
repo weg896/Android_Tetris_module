@@ -1,5 +1,7 @@
 package com.jerry.test.mytetrisgame.Shapes;
 
+import com.jerry.test.mytetrisgame.Model.BlocksFrame;
+
 /**
  * Created by test on 21/01/16.
  */
@@ -45,7 +47,8 @@ public class T_Shape extends RootShape {
     }
 
 
-    public void rotateShape(){
+    public synchronized void rotateShape(BlocksFrame blocksFrame){
+        int[][] currentShape = shapePosition;
         int currentCenterX =  shapePosition[centerBlockIndex][POSITION_X];
         int currentCenterY = shapePosition[centerBlockIndex][POSITION_Y];
         int currentShapeFaceTo = shapeFaceTo;
@@ -63,7 +66,11 @@ public class T_Shape extends RootShape {
                 shapePosition[3][POSITION_X] = currentCenterX-1;
                 shapePosition[3][POSITION_Y] = currentCenterY;
 
-                // TODO:should test collision
+                if(detectCollisionWithBlocksFrame(blocksFrame)){
+                    // has collision, roll back
+                    shapePosition = currentShape;
+                }
+
                 break;
             case SHAPE_FACE_SOUTH:
                 shapeFaceTo = SHAPE_FACE_WEST;
@@ -77,7 +84,11 @@ public class T_Shape extends RootShape {
                 shapePosition[3][POSITION_X] = currentCenterX;
                 shapePosition[3][POSITION_Y] = currentCenterY-1;
 
-                // TODO:should test collision
+                if(detectCollisionWithBlocksFrame(blocksFrame)){
+                    // has collision, roll back
+                    shapePosition = currentShape;
+                }
+
                 break;
             case SHAPE_FACE_WEST:
                 shapeFaceTo = SHAPE_FACE_NORTH;
@@ -91,7 +102,10 @@ public class T_Shape extends RootShape {
                 shapePosition[3][POSITION_X] = currentCenterX+1;
                 shapePosition[3][POSITION_Y] = currentCenterY;
 
-                // TODO:should test collision
+                if(detectCollisionWithBlocksFrame(blocksFrame)){
+                    // has collision, roll back
+                    shapePosition = currentShape;
+                }
 
                 break;
             case SHAPE_FACE_NORTH:
@@ -106,7 +120,11 @@ public class T_Shape extends RootShape {
                 shapePosition[3][POSITION_X] = currentCenterX;
                 shapePosition[3][POSITION_Y] = currentCenterY+1;
 
-                // TODO:should test collision
+                if(detectCollisionWithBlocksFrame(blocksFrame)){
+                    // has collision, roll back
+                    shapePosition = currentShape;
+                }
+
                 break;
         }
 
@@ -122,7 +140,7 @@ public class T_Shape extends RootShape {
             test_cleanMockScreen(mockScreen, mockScreenSize);
             test_boundShapeToMockScreen(mockScreen, tShape);
             test_printMockScreen(mockScreen, mockScreenSize);
-            tShape.rotateShape();
+            //tShape.rotateShape();
 
             System.out.println(">>>>>>>>>>>>>>>");
         }

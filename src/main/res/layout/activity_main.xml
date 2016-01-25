@@ -1,11 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<GridLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-    <com.jerry.test.mytetrisgame.GameSurfaceView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    android:orientation="vertical"
+    android:columnCount="6"
+    android:rowCount="2">
 
-</LinearLayout>
+    <com.jerry.test.mytetrisgame.GameSurfaceView
+        android:id="@+id/game_surface_view"
+        android:layout_width="match_parent"
+        android:layout_height="661dp"
+        android:layout_row="0"
+        android:layout_column="0"
+        android:layout_columnSpan="4" />
+
+    <Button
+        android:id="@+id/move_left_btn"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:text="Left"
+        android:layout_row="1"
+        android:layout_column="0" />
+
+    <Button
+        android:id="@+id/move_right_btn"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:text="Right"
+        android:layout_row="1"
+        android:layout_column="1" />
+
+    <Button
+        android:id="@+id/rotate_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="82dp"
+        android:text="Rotate"
+        android:layout_row="1"
+        android:layout_column="3" />
+
+</GridLayout>

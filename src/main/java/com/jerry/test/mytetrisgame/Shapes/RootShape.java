@@ -1,5 +1,7 @@
 package com.jerry.test.mytetrisgame.Shapes;
 
+import com.jerry.test.mytetrisgame.Model.BlocksFrame;
+
 /**
  * Created by test on 21/01/16.
  */
@@ -29,14 +31,57 @@ public abstract class RootShape {
     public static final int T_SHAPE_ID = 5;
     public static final int Z_SHAPE_ID = 6;
 
-    public static final int TOTAL_SHAPE = 7;
+    public static final int SHAPE_TYPE_NUMBER = 7;
 
-    abstract public void rotateShape();
+    abstract public void rotateShape(BlocksFrame blocksFrame);
 
-    public void updateShapePosition(int xOffset, int yOffset){
+    public boolean detectCollisionWithBlocksFrame(BlocksFrame blocksFrame){
+        boolean[][] blocks = blocksFrame.getBlocks();
+
+        for(int b=0;b<TOTAL_BLOCKS_NUMBER;b++) {
+            if (shapePosition[b][POSITION_X] < 0 ||
+                    shapePosition[b][POSITION_X] >= BlocksFrame.NUMBER_BLOCKS_X_AXIS){
+                return true;
+            }
+            if (shapePosition[b][POSITION_Y] < 0 ||
+                    shapePosition[b][POSITION_Y] >= BlocksFrame.NUMBER_BLOCKS_Y_AXIS+BlocksFrame.EXTEND_BLOCKS_Y_AXIS) {
+                return true;
+            }
+            if(blocks[shapePosition[b][POSITION_Y]][shapePosition[b][POSITION_X]]){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean detectShapeStopMoveDown(BlocksFrame blocksFrame){
+        boolean[][] blocks = blocksFrame.getBlocks();
+
+        for(int b=0;b<RootShape.TOTAL_BLOCKS_NUMBER;b++){
+            if(shapePosition[b][RootShape.POSITION_Y] >= BlocksFrame.NUMBER_BLOCKS_Y_AXIS+BlocksFrame.EXTEND_BLOCKS_Y_AXIS-1) {
+                return true;
+            }
+        }
+
+        for(int b=0;b<RootShape.TOTAL_BLOCKS_NUMBER;b++){
+            if(blocks[shapePosition[b][RootShape.POSITION_Y]+1][shapePosition[b][RootShape.POSITION_X]]){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public synchronized void updateShapePosition(int xOffset, int yOffset, BlocksFrame blocksFrame){
+        int[][] currentShape = shapePosition;
+
         for(int b=0;b<TOTAL_BLOCKS_NUMBER;b++){
             shapePosition[b][POSITION_X] += xOffset;
             shapePosition[b][POSITION_Y] += yOffset;
+        }
+        if(detectCollisionWithBlocksFrame(blocksFrame)){
+            shapePosition = currentShape;
+            System.out.println("collision on updateShapePosition");
         }
     }
 
@@ -71,5 +116,12 @@ public abstract class RootShape {
                 mockScreen[i][j] = '-';
             }
         }
+    }
+
+    public void test_printPosition(){
+        for(int b=0;b<RootShape.TOTAL_BLOCKS_NUMBER;b++){
+            System.out.print(shapePosition[b][RootShape.POSITION_Y]+" :- ");
+        }
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>");
     }
 }
